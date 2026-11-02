@@ -29,3 +29,9 @@ fish_data |>
             max_scale_length = max(scalelength, na.rm = TRUE),
             mean_scale_length = mean(scalelength, na.rm = TRUE))
 ```
+
+Make a new dataframe with only fish scales with lengths greater than 1mm.
+
+```{r}
+fish_data |> 
+```
