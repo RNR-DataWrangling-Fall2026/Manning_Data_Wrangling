@@ -35,3 +35,11 @@ Make a new dataframe with only fish scales with lengths greater than 1mm.
 ```{r}
 fish_data |> 
 ```
+
+
+
+
+```{r}
+ggplot(fish_data, aes(x = scalelength)) +
+  geom_histogram()
+```
