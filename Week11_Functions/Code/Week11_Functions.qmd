@@ -46,7 +46,10 @@ The braces indicate that the lines of code are a group that gets run together.
 Let's write out our first function. We want to calculate shrub volumes.
 
 ```{r}
-
+calc_shrub_vol <- function(length, width, height){
+  volume <- length * width * height
+  return(volume)
+}
 ```
 
 It is important to note that writing the function does not create the function. We have to remember to run the code to create the function and add it to our environment.
@@ -56,13 +59,13 @@ When we run this code chunk above, we can see that the function gets added to ou
 Let's use our new function.
 
 ```{r}
-
+calc_shrub_vol(0.8, 1.6, 2.0)
 ```
 
 As with other functions, we can store the output as an object to use later.
 
 ```{r}
-
+shrub_vol <- calc_shrub_vol(0.8, 1.6, 2.0)
 ```
 
 #### Let's Practice!
