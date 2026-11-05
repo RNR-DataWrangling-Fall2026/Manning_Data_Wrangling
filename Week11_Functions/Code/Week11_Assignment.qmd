@@ -47,17 +47,51 @@ a.  Copy the following function (which converts weights in pounds to weights in 
 #     grams <- 453.6 * pounds
 #     return(________)
 # }
+# 1a
+ convert_pounds_to_grams <- function(pounds) {
+     grams <- 453.6 * pounds
+return(grams)
+ }
+ convert_pounds_to_grams(3.75)
 ```
 
 b.  Copy the following function (which converts temperatures in Fahrenheit to temperatures in Celsius) and replace the `________` with the needed commands and variable names so that the function returns the calculated value for Celsius. Remove the comments and run the code to add the function to your environment.
 
     Use the function to calculate the temperature in Celsius if the temperature in Fahrenheit is 80°F.
 
+\# convert_fahrenheit_to_celsius \<- \_\_\_\_\_\_\_\_(\_\_\_\_\_\_\_\_) {
+
+\# celsius \<- (fahrenheit - 32) \* 5 / 9
+
+\# \_\_\_\_\_\_\_\_(\_\_\_\_\_\_\_\_)
+
+\# }
+
 ```{r}
 # convert_fahrenheit_to_celsius <- ________(________) {
 #     celsius <- (fahrenheit - 32) * 5 / 9
 #     ________(________)
 # }
+# 1b
+ convert_fahrenheit_to_celsius <- function(fahrenheit) {
+     celsius <- (fahrenheit - 32) * 5 / 9
+     return(celsius)
+ }
+ convert_fahrenheit_to_celsius(80)
+ 
+# 1c
+ double <- function(number){
+   dbl_number <- number * 2
+   return(dbl_number)
+ }
+ double(512)
+ 
+ # 1d
+ prediction <- function(x, a, b){
+   y = a + b * x
+   return(y)
+ }
+ prediction(12, 6, 0.8)
 ```
 
 c.  Write a function named `double` that takes a number as input and outputs that number multiplied by 2. Run it with an input of 512.
@@ -79,6 +113,16 @@ get_mass_from_length_theropoda <- function(length){
   mass <- 0.73 * length ^ 3.63
   return(mass)
 }
+
+# 2a
+get_mass_from_length_theropoda(16)
+
+# 2b
+get_mass_from_length <- function(length, a, b){
+  mass <- a * length ^ b
+  return(mass)
+}
+get_mass_from_length(26, 214.44, 1.46)
 ```
 
 a.  Use this function to print out the mass of a *Theropoda* that is 16 m long based on its reassembled skeleton.
@@ -99,6 +143,25 @@ a.  Copy the following function below (which converts weights in pounds to weigh
 #   rounded <- round(grams, digits = numdigits)
 #   return(________)
 # }
+
+# 3a - convert pounds to grams function
+convert_pounds_to_grams <- function(pounds, numdigits = 1) {
+  grams <- 453.6 * pounds
+  rounded <- round(grams, digits = numdigits)
+  return(rounded)
+}
+convert_pounds_to_grams(4.3)
+
+# 3b - height from weight function
+get_height_from_weight <- function(weight, a = 12, b = 0.38){
+  height <- a * weight ^ b
+  return(height)
+}
+get_height_from_weight(42)
+
+# 3c - Combine 2 above functions
+convert_pounds_to_grams(2) |> 
+  get_height_from_weight(b = 0.32)
 ```
 
 b.  Write a function called `get_height_from_weight` that takes three arguments, `weight`, `a`, and `b`, and returns an estimate of `height` using `height <- a * weight ^ b` (a prediction from a power model). Give it default arguments of `a` = 12 and `b` = 0.38. There should be no default value for `weight`.
@@ -111,9 +174,22 @@ c.  The function in (b) assumes that the weight is provided in grams. Use the fu
 
 This is a follow up to `Question 2: Use and Modify`.
 
+```{r}
+# 4a - rewrite get_mass_from_length
+get_mass_from_length_general <- function(length, a = 39.9, b = 2.6){
+  mass <- a * length ^ b
+  return(mass)
+}
+# 4b - Estimate mass of a Sauropoda
+get_mass_from_length_general(22, a = 214.44, b = 1.46)
+
+# 4c - Estimate mass of unknown taxonomic group
+get_mass_from_length_general(16)
+```
+
 Allowing `a` and `b` to be passed as arguments to `get_mass_from_length()` made the function more flexible, but for some types of dinosaurs we don't have specific values of `a` and `b` and so we have to use general values that can be applied to a number of different species.
 
-a. Rewrite your `get_mass_from length()` function from Question 2 so that its arguments have default values of `a = 39.9` and `b = 2.6` (the average values from [Seebacher 2001](http://www.jstor.org/stable/4524171)).
+a.  Rewrite your `get_mass_from length()` function from Question 2 so that its arguments have default values of `a = 39.9` and `b = 2.6` (the average values from [Seebacher 2001](http://www.jstor.org/stable/4524171)).
 b.  Use the rewritten function from (a) to estimate the mass of a Sauropoda (`a = 214.44`, `b = 1.46`) that is 22 m long.
 c.  Use this function to estimate the mass of a dinosaur from an unknown taxonomic group that is 16m long. Only pass the function `length`, not `a` and `b`, so that the default values are used.
 
@@ -127,6 +203,15 @@ Write a function called `convert_kg_to_pounds` that converts kilograms into poun
 
 Using a pipe, connect this new function and your `get_mass_from_length()` function from Question 4 to estimate the weight, in pounds, of a 12 m long Stegosaurus with `a = 10.95` and `b = 2.64` (The estimated `a` and `b` values for *Stegosauria* from [Seebacher 2001](http://www.jstor.org/stable/4524171)).
 
+```{r}
+convert_kg_to_pounds <- function(kg){
+  pounds = 2.205 * kg
+  return(pounds)
+}
+get_mass_from_length_general(12, a = 10.95, b = 2.64) |> 
+  convert_kg_to_pounds()
+```
+
 ### 6. Writing Tidyverse Functions (20 points)
 
 First, load either the `tidyverse` or `ggplot2`, if you haven't already done so in this document.
@@ -134,12 +219,36 @@ First, load either the `tidyverse` or `ggplot2`, if you haven't already done so 
 Run the code below to create a data frame named `count_data` with columns named `state`, `count`, `area`, and `site`.
 
 ```{r}
+library(tidyverse)
 count_data <- data.frame(
   state = c("AZ", "AZ", "AZ", "AZ", "NM", "NM", "NM", "NM", "NV", "NV", "NV", "NV"),
   site = c("A", "B", "C", "D", "A", "B", "C", "D", "A", "B", "C", "D"),
   count = c(9, 16, 3, 10, 2, 26, 5, 8, 17, 8, 2, 6),
   area = c(3, 5, 1.9, 2.7, 2, 2.6, 6.2, 4.5, 8, 4, 1, 3)
   )
+
+# 6a - Plotting Function with count and area
+count_by_area <- function(df, color_column){
+  ggplot(data = df, aes(x = area, y = count, color = {{ color_column }})) +
+    geom_point(size = 3) +
+    theme_bw()
+}
+count_by_area(count_data, state)
+ggsave("../images/count_by_area.png")
+
+# 6b - Site colored plot
+count_by_area(count_data, site)
+ggsave("../images/count_by_area_site.png")
+
+# 6c - Customizable plot function
+customizable_plot <- function(df, x, y, xlab, ylab, color_column){
+  ggplot(data = df, aes(x = {{ x }}, y = {{ y }}, color = {{ color_column }})) +
+    geom_point(size = 3) +
+    labs(x = xlab, y = ylab) +
+    theme_classic()
+}
+customizable_plot(count_data, area, count, "Area", "Count", site)
+ggsave("../images/customized_count_area_plot.png")
 ```
 
 a.  Write a function takes two arguments: (1) a data frame with a `count` column and an `area` column; and (2) a column in that data frame to color the points by.
@@ -161,12 +270,12 @@ c.  Create a new function based on the function you created in (a); in this new 
 If surveys.csv, species.csv, and plots.csv are not available in your workspace download them (modify the `destfile` arguments to point to the correct sub-directory):
 
 ```{r}
-# download.file(url = "https://ndownloader.figshare.com/files/2292172",
-#   destfile = "surveys.csv")
-# download.file(url = "https://ndownloader.figshare.com/files/3299474",
-#   destfile = "plots.csv")
-# download.file(url = "https://ndownloader.figshare.com/files/3299483",
-#   destfile = "species.csv")
+#download.file(url = "https://ndownloader.figshare.com/files/2292172",
+ # destfile = "../Data/surveys.csv")
+#download.file(url = "https://ndownloader.figshare.com/files/3299474",
+#  destfile = "../Data/plots.csv")
+#download.file(url = "https://ndownloader.figshare.com/files/3299483",
+#  destfile = "../Data/species.csv")
 ```
 
 a.  Write a function that does the following:
