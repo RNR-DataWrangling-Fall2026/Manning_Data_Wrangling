@@ -111,11 +111,49 @@ d.  Now use the `case_when` function inside a `mutate` function to create a new 
 a.  Complete the following `if` statement so that if `age_class` is equal to "sapling" it sets `y` to 10, if `age_class` is equal to "seedling" it sets `y` to 5, and if `age_class` is something else it sets `y` to 0.
 
 ```{r}
+#3a
 age_class <- "adult"
-if (){
-
+if (age_class == "sapling"){
+ y <- 10 
+} else if (age_class == "seedling") {
+  y <- 5
+} else {
+  y <- 0
 }
 y
+
+#3b
+determine_age_class <- function(age_class){
+  if (age_class == "sapling") {
+    y <- 10
+  } else if (age_class == "seedling") {
+    y <- 5
+  } else {
+    y <- 0
+  }
+  return(y)
+}
+determine_age_class("sapling")
+determine_age_class("seedling")
+determine_age_class("adult")
+determine_age_class("mature")
+determine_age_class("established")
+
+#3c
+predict_value <- function(x) {
+  if (x > 0 & x < 15) {
+    y <- 6 + 0.8 * x
+  } else if (x >= 15 & x < 30) {
+    y <- 5 + 0.75 * x
+  }
+  else {
+    y <- NA
+  }
+  return(y)
+}
+predict_value(5)
+predict_value(26)
+predict_value(-2)
 ```
 
 b.  Convert your conditional statement from (a) into a function that takes `age_class` as an argument and returns `y`. Call this function 5 times, once with each of the following values for `age_class`: "sapling", "seedling", "adult", "mature", "established".
@@ -141,6 +179,26 @@ Inside this function use `if`/`else if`/`else` statements to check to see if the
 - *Sauropoda*: `mass = 214.44 * length ^ 1.46`
 
 If the name is not any of these values the function should return `NA`.
+
+```{r}
+get_mass_from_length_by_name <- function(length, dino_group) {
+  if (dino_group == "Stegosauria") {
+    mass <- 10.95 * length ^ 2.64
+  } else if (dino_group == "Theropoda") {
+    mass <- 0.73 * length ^ 3.63
+  } else if (dino_group == "Sauropoda") {
+    mass <- 214.44 * length ^ 1.46
+  } else {
+    mass <- NA
+  }
+  return(mass)
+}
+
+get_mass_from_length_by_name(10, "Stegosauria")
+get_mass_from_length_by_name(8, "Theropoda")
+get_mass_from_length_by_name(12, "Sauropoda")
+get_mass_from_length_by_name(13, "Ankylosauria")
+```
 
 Run the function for the following:
 
@@ -172,10 +230,52 @@ In this question, you will combine choice functions with joins, strings, and plo
 Download the following Portal data tables using code below (modify the `destfile` arguments to point to the correct sub-directory) to get started.
 
 ```{r}
-# download.file(url = "https://ndownloader.figshare.com/files/2292172",
-#   destfile = "surveys.csv")
-# download.file(url = "https://ndownloader.figshare.com/files/3299483",
-#   destfile = "species.csv")
+download.file(url = "https://ndownloader.figshare.com/files/2292172",
+  destfile = "../Data/surveys.csv")
+download.file(url = "https://ndownloader.figshare.com/files/3299483",
+  destfile = "../Data/species.csv")
+surveys <- read_csv("../Data/surveys.csv")
+species <- read_csv("../Data/species.csv")
+#5a
+rodents <- surveys |> 
+  inner_join(species) |> 
+  filter(taxa == "Rodent") |> 
+  mutate(scientific_name = str_c(genus, species, sep = " "))
+
+#5b
+rodents <- rodents |> 
+  mutate(id_level = if_else(str_detect(species, "sp\\."),
+                            true = "genus only",
+                            false = "species"))
+count(rodents$id_level)
+
+#5c
+rodents <- rodents |> 
+  mutate(season = if_else(month %in% c(4, 5, 6, 7 , 8 ,9),
+                          true = "warm",
+                          false = "cool"),
+         .after = month)
+
+#5d
+rodents <- rodents |> 
+  mutate(weight_class = case_when(.default = "large",
+                                  weight < 20 ~ "small",
+                                  weight >= 20 & weight < 50 ~ "medium",
+                                  is.na(weight) ~ "unknown"),
+         .after = weight)
+
+#5e
+rodents_count <- rodents |> 
+  filter(weight_class != "unknown") |> 
+  group_by(year, season, weight_class) |> 
+  summarize(count = n())
+
+ggplot(rodents_count, aes(x = year, y = count, color = weight_class)) +
+  geom_line() +
+  facet_wrap(~ season) +
+  labs(x = "Year",
+       y = "Count") +
+  theme_dark()
 ```
 
 a.  Join `surveys` and `species` together so that each survey record has the genus, species, and taxa information. Keep only rodents (`taxa` is "Rodent"). Then, use a `stringr` function to add a column called `scientific_name` that combines `genus` and `species` with a space between them (e.g., "Dipodomys merriami"). Save the result as an object called `rodents`.
@@ -197,9 +297,13 @@ d.  Use `case_when` inside a `mutate` to add a column called `weight_class` with
 
     In a sentence or two, answer the following: what would happen to individuals with missing weights if you left out the "unknown" line? Why?
 
+    a.  Because the default is large, a NA value would fit under that default category because it is not defined in the other two categories. So the data would be extremely skewed in that column because rodents with no weight would be classified as large.
+
 e.  Using `rodents`, remove the individuals with an "unknown" weight class and count the number of individuals in each `year`, `season`, and `weight_class`. Then, make a line plot with `year` on the x-axis, the count on the y-axis, lines colored by `weight_class`, and a separate panel for each `season`. Give your plot informative axis labels and use a theme of your choice.
 
     In a sentence or two, describe one pattern you see in the plot.
+
+    a.  In both warm and cool climates, medium plants have increased in abundance over time. Large plants have declined over time, but not as dramatically, and small plants peaked then dropped in cool climates and increased slightly in warm climates. There is also a dip in every type and in both climates around 1994ish, where abundance dropped significantly.
 
 ### 6. Challenge: A "Safe" Tidyverse Function (OPTIONAL)
 
