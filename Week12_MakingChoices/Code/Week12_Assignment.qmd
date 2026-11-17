@@ -43,6 +43,7 @@ y <- 2.8
 z <- 17.5
 colors <- c("red", "blue", "green")
 masses <- c(45.2, 36.1, 27.8, 81.6, 42.4)
+library(tidyverse)
 
 # 1a
 "green" %in% colors
@@ -69,6 +70,7 @@ e.  `x` times `w` is between 13.2 and 13.5
 For this question, we will be using functions from `dplyr` (part of the `tidyverse`) and data from the `lterdatasampler` package, so make sure you load both of those packages with the `library()` function.
 
 ```{r}
+library(lterdatasampler)
 crab_size <- 17
 
 #2a If else for crab size
@@ -214,13 +216,13 @@ d.  An *Ankylosauria* that is 13 meters long.
 Hint: you can put an `if`-`else` statement inside another `if` statement, like this:
 
 ```{r eval=FALSE}
-if (name == "Stegosauria") {
-  if (length > 8) {
-    # one set of a and b values
-  } else {
+#if (name == "Stegosauria") {
+ # if (length > 8) {
+  #  # one set of a and b values
+#  } else {
     # another set of a and b values
-  }
-} else if ...
+ # }
+#} else if ...
 ```
 
 ### 5. Putting It All Together: Portal Rodents (30 points)
@@ -247,7 +249,7 @@ rodents <- rodents |>
   mutate(id_level = if_else(str_detect(species, "sp\\."),
                             true = "genus only",
                             false = "species"))
-count(rodents$id_level)
+
 
 #5c
 rodents <- rodents |> 
